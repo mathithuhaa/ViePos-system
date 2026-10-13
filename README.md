@@ -2,6 +2,9 @@
 
 > **Giải pháp quản lý bán hàng và kho nguyên liệu tối ưu cho mô hình F&B vừa và nhỏ**
 
+Root Admin:
+mtthuhaa@gmail.com
+Admin123!@#
 ---
 
 ## 📌 Giới thiệu
