@@ -193,6 +193,7 @@ CREATE TABLE orders (
     discount_amount DECIMAL(12,2) NOT NULL DEFAULT 0,
     tax_amount DECIMAL(12,2) NOT NULL DEFAULT 0,
     total_amount DECIMAL(12,2) NOT NULL DEFAULT 0,
+    cash_received DECIMAL(12,2) DEFAULT 0,
     note TEXT,
     status order_status NOT NULL DEFAULT 'COMPLETED',
     completed_at TIMESTAMP,
