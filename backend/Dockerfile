@@ -2,15 +2,12 @@
 FROM maven:3.9.6-eclipse-temurin-17-alpine AS build
 WORKDIR /app
 
-# Configure Maven mirror to prevent 429 Too Many Requests
-COPY settings.xml /root/.m2/settings.xml
-
 # Copy pom.xml and source code
 COPY pom.xml .
 COPY src ./src
 
-# Build package directly
-RUN mvn clean package -DskipTests -B -s /root/.m2/settings.xml
+# Build the application
+RUN mvn clean package -DskipTests -B
 
 # Stage 2: Run the application
 FROM eclipse-temurin:17-jre-alpine
