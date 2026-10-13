@@ -1,161 +1,56 @@
-# ViePOS — Hệ thống Quản lý F&B
+ViePOS - Hệ thống Quản lý Hoạt động Kinh doanh F&B
+Giải pháp quản lý bán hàng và kho nguyên liệu tối ưu cho mô hình F&B vừa và nhỏ
+📌 Giới thiệu
+ViePOS là hệ thống quản lý tích hợp được thiết kế chuyên biệt cho các quán cà phê và cơ sở F&B quy mô vừa và nhỏ. Dự án tập trung giải quyết các thách thức trong vận hành như: sai sót khi quản lý thủ công, thất thoát nguyên vật liệu và áp lực tuân thủ quy định về hóa đơn điện tử. Với triết lý "Vừa - Đủ - Tinh gọn", ViePOS cung cấp quy trình số hóa từ khâu Order đến quản lý kho đa tầng theo định mức (BOM).
 
-> **Kiến trúc mới:** React (Vite) + Spring Boot + Supabase (PostgreSQL)
+📚 Đồ án môn học: Phân tích & Thiết kế Hệ thống Thông tin - 252BIM5022
 
----
-
-## Cấu trúc thư mục
-
-```
-ViePOS-F-B-Management-system/
-├── frontend/          ← React + Vite (Giao diện người dùng)
-├── backend/           ← Spring Boot (Xử lý nghiệp vụ & API)
-├── legacy_backup/     ← Code Next.js cũ (lưu để tham khảo)
+👥 Nhóm thực hiện
+STT	Tên thành viên
+1	Ma Thị Thu Hà
+2	Nguyễn Như Huyền
+3	Vũ Minh Nhật
+4	Nguyễn Linh Yến Nhi
+5	Trần Quang Vũ
+🎯 Mục tiêu
+Số hóa quy trình bán hàng (POS): Tiếp nhận Order, thanh toán và chuyển lệnh pha chế thời gian thực.
+Quản lý kho chuyên sâu: Theo dõi vòng đời nguyên vật liệu từ kho thô đến bán thành phẩm.
+Tối ưu định mức (BOM): Tự động trừ kho dựa trên công thức chế biến (Hybrid BOM) để kiểm soát hao hụt.
+Hỗ trợ quản trị: Cung cấp báo cáo doanh thu, tồn kho và cảnh báo ngưỡng an toàn/hạn sử dụng.
+📁 Cấu trúc dự án
+ViePOS-system/
+│
+├── report/
+│   └── ViePOS_system.pdf   # Báo cáo đồ án
+│
 └── README.md
-```
-
----
-
-## Yêu cầu cài đặt
-
-| Phần mềm | Phiên bản | Tải về |
-|----------|-----------|--------|
-| Node.js  | 18+       | [nodejs.org](https://nodejs.org) |
-| pnpm     | 8+        | `npm install -g pnpm` |
-| Java JDK | 17+       | [adoptium.net](https://adoptium.net) |
-| Maven    | (có sẵn trong backend) | — |
-
----
-
-## 🚀 Cách chạy dự án
-
-### Bước 1: Cấu hình Database (Supabase)
-
-1. Vào dự án Supabase của bạn → **Settings → Database → Connection string → JDBC** (Chọn chế độ **Pooler**, port `6543` để hỗ trợ mạng IPv4 như Render/Local).
-2. Tạo file `backend/src/main/resources/application-local.yml` (không commit file này):
-   ```yaml
-   spring:
-     datasource:
-       url: jdbc:postgresql://aws-1-ap-southeast-2.pooler.supabase.com:6543/postgres?prepareThreshold=0&sslmode=require
-       username: postgres.YOUR_PROJECT_REF
-       password: YOUR_SUPABASE_PASSWORD
-   jwt:
-     secret: YOUR_JWT_SECRET_MIN_32_CHARS
-   ```
-
-### Bước 2: Chạy Backend (Spring Boot)
-
-Mở Terminal tại thư mục gốc, chạy lần lượt:
-
-```bash
-cd backend
-./mvnw spring-boot:run -Dspring-boot.run.profiles=local
-```
-
-> Backend sẽ chạy tại: **http://localhost:8080**
-
-*(Lần đầu chạy sẽ tải dependencies về, mất 1-2 phút)*
-
-### Bước 3: Chạy Frontend (React)
-
-Mở **Terminal mới** (để backend vẫn chạy), rồi chạy:
-
-```bash
-cd frontend
-pnpm dev
-```
-
-> Frontend sẽ chạy tại: **http://localhost:5173**
-
----
-
-## Các lệnh thường dùng
-
-```bash
-# --- Frontend ---
-cd frontend
-pnpm dev          # Chạy môi trường phát triển
-pnpm build        # Build để deploy (tạo thư mục dist/)
-pnpm preview      # Xem trước bản build
-
-# --- Backend ---
-cd backend
-./mvnw spring-boot:run   # Chạy server
-./mvnw package           # Build file .jar để deploy
-```
-
----
-
-## 🌐 Dự án chạy chính thức (Production)
-
-- **Frontend (Vercel)**: `https://vie-pos-f-b-management-system.vercel.app` (hoặc domain Vercel bạn đã gán)
-- **Frontend cũ (Firebase, tùy chọn)**: [https://molten-gasket-434712-c8.web.app](https://molten-gasket-434712-c8.web.app)
-- **Backend (Render)**: `https://viepos-f-b-management-system.onrender.com`
-
-### Giữ production ổn định (3 việc — không đổi stack)
-
-| Việc | Mục đích | Trạng thái trong repo |
-|------|----------|------------------------|
-| **Fix 1** — `GET /api/ping` mỗi **14 phút** (cron-job.org) | Render free tier không sleep → API không chậm 30–60s | `PingController` + `SecurityConfig` permit `/api/ping` |
-| **Fix 2** — UptimeRobot monitor URL backend | Email/Telegram khi backend down | Cấu hình trên uptimerobot.com (ngoài code) |
-| **Fix 3** — Frontend trên **Vercel** (root = `frontend/`) | Build Vite tự động khi push GitHub | `frontend/vercel.json`, CORS `*.vercel.app` |
-
-**Cron-job.org (Fix 1):** URL = `https://viepos-f-b-management-system.onrender.com/api/ping`, schedule mỗi 14 phút, method GET.
-
-**UptimeRobot (Fix 2):** Monitor `https://viepos-f-b-management-system.onrender.com/api/ping`, keyword `pong` hoặc `ok`.
-
-**Vercel (Fix 3):** Import repo GitHub → Root Directory = `frontend` → Environment `VITE_API_URL` = URL Render backend → Deploy.
-
----
-
-## 🚀 Quy trình cập nhật & Deploy khi thay đổi Code
-
-### 1. Backend (Spring Boot — Render)
-Push lên `main` → Render auto-deploy (Dockerfile).
-
-```bash
-git add .
-git commit -m "mô tả thay đổi"
-git push origin main
-```
-
-### 2. Frontend (React + Vite — Vercel)
-Push lên `main` → Vercel tự build (thư mục `frontend`).
-
-Đảm bảo trên Vercel có biến:
-
-```bash
-VITE_API_URL=https://viepos-f-b-management-system.onrender.com
-```
-
-Build local (kiểm tra trước khi push):
-
-```bash
-cd frontend
-pnpm install
-pnpm run build
-```
-
-### 3. Firebase (tùy chọn, nếu vẫn dùng song song)
-
-```bash
-cd frontend
-pnpm run build
-firebase deploy --only hosting
-```
-
----
-
-## 🔑 Biến môi trường trên Production
-
-### 1. Frontend (`frontend/.env.production`)
-```bash
-VITE_API_URL=https://viepos-f-b-management-system.onrender.com
-```
-
-### 2. Backend (Render Environment)
-Cần cấu hình 4 biến môi trường sau trong mục **Environment** trên Dashboard Render:
-- `SPRING_DATASOURCE_URL` = `jdbc:postgresql://aws-1-ap-southeast-2.pooler.supabase.com:6543/postgres?prepareThreshold=0&sslmode=require`
-- `SPRING_DATASOURCE_USERNAME` = `postgres.osnngwxnpfpbynbwfdnq`
-- `SPRING_DATASOURCE_PASSWORD` = `Hoilamcgi282111`
-- `JWT_SECRET` = `dcm0RjLIMaVBTQJprG7+qvIl5O6nIc/N2GH1nOLjPhAdkL/9rmmGOjjNl8/HcCV89+YO/WnUunpPV0G4Luke1g==`
+🔄 Pipeline
+Khảo sát hiện trạng (Phỏng vấn & Quan sát) [cite: 122, 134]
+        ↓
+Xác định yêu cầu (Chức năng & Phi chức năng) [cite: 172]
+        ↓
+Phân tích luồng dữ liệu (DFD Context, Level 0) [cite: 246]
+        ↓
+Mô hình hóa nghiệp vụ (BPMN, Use Case) [cite: 255]
+        ↓
+Thiết kế Cơ sở dữ liệu (ERD, Từ điển dữ liệu) [cite: 248]
+        ↓
+Thiết kế hướng đối tượng (Class Diagram, Sequence Diagram) [cite: 251]
+        ↓
+Thiết kế Giao diện (UI/UX Mockup) [cite: 352]
+        ↓
+Đánh giá & Tổng kết [cite: 169]
+🛠 Công nghệ & Công cụ sử dụng
+Mô hình hóa: draw.io
+Thiết kế UI/UX: Figma
+Quản lý dự án: Google Sheet, Zalo, Google Meet, Google Docs
+Kiến trúc hệ thống: Web Application (Mô hình MVC)
+🧪 Kết quả đạt được
+Hệ thống POS linh hoạt: Cho phép tùy chỉnh topping, ghi chú và in hóa đơn nhanh chóng.
+Quản lý kho kép: Xử lý tốt bài toán chuyển đổi từ nguyên liệu thô sang bán thành phẩm (sơ chế).
+Tính minh bạch cao: Lưu vết toàn bộ lịch sử xuất - nhập - tồn thông qua phiếu kiểm kê và giải trình chênh lệch.
+Khả năng mở rộng: Định hướng tích hợp thanh toán số (MoMo, VNPay) và kết nối các sàn Food Delivery (GrabFood, ShopeeFood).
+💡 Hướng phát triển tương lai
+Ứng dụng AI: Dự đoán nhu cầu nguyên vật liệu để hạn chế lãng phí.
+Quản trị đa chi nhánh: Phát triển phân hệ kho tổng và điều phối hàng hóa giữa các điểm bán.
+Omnichannel: Đồng bộ doanh thu từ các nền tảng đặt món trực tuyến qua API.
